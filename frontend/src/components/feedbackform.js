@@ -182,7 +182,7 @@ export default function FeedbackForm({ onFeedbackAdded }) {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/feedback", formData);
+      const response = await axios.post("https://student-feedback-1-nyki.onrender.com/", formData);
       setMessage("✅ Feedback submitted successfully!");
       setFormData({ 
         student_no: "",
