@@ -22,99 +22,62 @@ export default function FeedbackForm({ onFeedbackAdded }) {
 
   // Validation functions
   const validateStudentName = (value) => {
-    // Only allow letters, spaces, hyphens, and apostrophes
     const regex = /^[A-Za-z\s\-']*$/;
-    
-    // Check word count (max 3 words)
     const wordCount = countWords(value);
     if (wordCount > 3) return false;
-    
     return regex.test(value);
   };
 
   const validateStudentNumber = (value) => {
-    // Only allow numbers
     const regex = /^\d*$/;
     return regex.test(value);
   };
 
   const validateCourseCode = (value) => {
-    // Allow letters, numbers, and hyphens - NO SPACES
     const regex = /^[A-Za-z0-9\-]*$/;
-    
-    // Check if it contains spaces (should not)
     if (value.includes(' ')) return false;
-    
     return regex.test(value);
   };
 
   const validateComments = (value) => {
-    // Allow letters, numbers, spaces, and basic punctuation
     const regex = /^[A-Za-z0-9\s\.,!?\-']*$/;
-    
-    // Check word count (max 10 words)
     const wordCount = countWords(value);
     if (wordCount > 10) return false;
-    
     return regex.test(value);
   };
 
   const validateRating = (value) => {
-    // Only allow numbers 1-5
     const regex = /^[1-5]?$/;
     return regex.test(value);
   };
 
   const getValidationFunction = (fieldName) => {
     switch (fieldName) {
-      case 'student_name':
-        return validateStudentName;
-      case 'student_no':
-        return validateStudentNumber;
-      case 'course_code':
-        return validateCourseCode;
-      case 'comments':
-        return validateComments;
-      case 'rating':
-        return validateRating;
-      default:
-        return () => true;
-    }
-  };
-
-  const getWordCountMessage = (fieldName, value) => {
-    const wordCount = countWords(value);
-    
-    switch (fieldName) {
-      case 'student_name':
-        return `${wordCount}/3 words`;
-      case 'comments':
-        return `${wordCount}/10 words`;
-      default:
-        return '';
+      case 'student_name': return validateStudentName;
+      case 'student_no': return validateStudentNumber;
+      case 'course_code': return validateCourseCode;
+      case 'comments': return validateComments;
+      case 'rating': return validateRating;
+      default: return () => true;
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     const validationFunction = getValidationFunction(name);
-    
-    // For course code, automatically remove spaces as user types
+
     let processedValue = value;
     if (name === 'course_code') {
-      processedValue = value.replace(/\s/g, ''); // Remove all spaces
+      processedValue = value.replace(/\s/g, '');
     }
-    
-    // Validate input before updating state
+
     if (validationFunction(processedValue)) {
       setFormData({ ...formData, [name]: processedValue });
-      // Clear error for this field if validation passes
       setErrors({ ...errors, [name]: '' });
     } else {
-      // Set appropriate error message based on field
       let errorMessage = '';
       const wordCount = countWords(value);
-      
+
       if (name === 'student_name' && wordCount > 3) {
         errorMessage = "Student name cannot exceed 3 words";
       } else if (name === 'comments' && wordCount > 10) {
@@ -126,11 +89,8 @@ export default function FeedbackForm({ onFeedbackAdded }) {
       } else {
         errorMessage = `Invalid input for ${name.replace('_', ' ')}`;
       }
-      
-      setErrors({ 
-        ...errors, 
-        [name]: errorMessage 
-      });
+
+      setErrors({ ...errors, [name]: errorMessage });
     }
   };
 
@@ -138,11 +98,10 @@ export default function FeedbackForm({ onFeedbackAdded }) {
     e.preventDefault();
     setMessage("");
 
-    // Final validation before submission
     const finalErrors = {};
     const studentNameWordCount = countWords(formData.student_name);
     const commentsWordCount = countWords(formData.comments);
-    
+
     if (!validateStudentName(formData.student_name)) {
       if (studentNameWordCount > 3) {
         finalErrors.student_name = "Student name cannot exceed 3 words";
@@ -150,11 +109,11 @@ export default function FeedbackForm({ onFeedbackAdded }) {
         finalErrors.student_name = "Student name can only contain letters, spaces, hyphens, and apostrophes";
       }
     }
-    
+
     if (!validateStudentNumber(formData.student_no)) {
       finalErrors.student_no = "Student number can only contain numbers";
     }
-    
+
     if (!validateCourseCode(formData.course_code)) {
       if (formData.course_code.includes(' ')) {
         finalErrors.course_code = "Course code cannot contain spaces";
@@ -162,7 +121,7 @@ export default function FeedbackForm({ onFeedbackAdded }) {
         finalErrors.course_code = "Course code can only contain letters, numbers, and hyphens (no spaces)";
       }
     }
-    
+
     if (!validateComments(formData.comments)) {
       if (commentsWordCount > 10) {
         finalErrors.comments = "Comments cannot exceed 10 words";
@@ -170,7 +129,7 @@ export default function FeedbackForm({ onFeedbackAdded }) {
         finalErrors.comments = "Comments can only contain letters, numbers, spaces, and basic punctuation";
       }
     }
-    
+
     if (!validateRating(formData.rating)) {
       finalErrors.rating = "Rating must be a number between 1 and 5";
     }
@@ -182,7 +141,11 @@ export default function FeedbackForm({ onFeedbackAdded }) {
     }
 
     try {
-      const response = await axios.post("https://student-feedback-1-nyki.onrender.com/", formData);
+      // ✅ Update: use deployed API endpoint
+      const response = await axios.post(
+        "https://student-feedback-1-nyki.onrender.com/api/feedback",
+        formData
+      );
       setMessage("✅ Feedback submitted successfully!");
       setFormData({ 
         student_no: "",
@@ -263,7 +226,6 @@ export default function FeedbackForm({ onFeedbackAdded }) {
             rows="3"
           />
           {errors.comments && <span className="error-message">{errors.comments}</span>}
-          
         </div>
 
         {/* Rating Field */}
