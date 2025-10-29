@@ -8,9 +8,11 @@ export default function FeedbackList({ refresh }) {
   const fetchFeedback = async () => {
     try {
       const response = await axios.get("https://student-feedback-1-nyki.onrender.com/");
-      setFeedbacks(response.data);
+      // Ensure feedbacks is always an array
+      setFeedbacks(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching feedback:", error);
+      setFeedbacks([]); // fallback
     }
   };
 
@@ -48,7 +50,7 @@ export default function FeedbackList({ refresh }) {
               </tr>
             </thead>
             <tbody>
-              {feedbacks.map((fb) => (
+              {Array.isArray(feedbacks) && feedbacks.map((fb) => (
                 <tr key={fb.student_no}>
                   <td>{fb.student_name}</td>
                   <td>{fb.course_code}</td>
