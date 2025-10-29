@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Student Feedback App backend using Express and Supabase",
+  "main": "backend.js",
+  "type": "module",
+  "scripts": {
+    "start": "node backend.js"
+  },
+  "keywords": [],
+  "author": "Kopano Lejone",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.76.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
