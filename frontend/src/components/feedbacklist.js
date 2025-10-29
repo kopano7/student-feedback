@@ -7,7 +7,7 @@ export default function FeedbackList({ refresh }) {
 
   const fetchFeedback = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/feedback");
+      const response = await axios.get("https://student-feedback-1-nyki.onrender.com/");
       setFeedbacks(response.data);
     } catch (error) {
       console.error("Error fetching feedback:", error);
