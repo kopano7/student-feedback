@@ -7,19 +7,19 @@ export default function FeedbackList({ refresh }) {
 
   const fetchFeedback = async () => {
     try {
-      const response = await axios.get("https://student-feedback-1-nyki.onrender.com/");
+      const response = await axios.get("https://student-feedback-1-nyki.onrender.com/api/feedback");
       // Ensure feedbacks is always an array
       setFeedbacks(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching feedback:", error);
-      setFeedbacks([]); // fallback
+      setFeedbacks([]); // fallback to empty array
     }
   };
 
   const handleDelete = async (student_no) => {
     if (window.confirm("Are you sure you want to delete this feedback?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/feedback/${student_no}`);
+        await axios.delete(`https://student-feedback-1-nyki.onrender.com/api/feedback/${student_no}`);
         fetchFeedback(); // Refresh after deletion
       } catch (error) {
         console.error("Error deleting feedback:", error);
@@ -61,7 +61,7 @@ export default function FeedbackList({ refresh }) {
                       onClick={() => handleDelete(fb.student_no)}
                       className="delete-btn"
                     >
-                     Delete
+                      Delete
                     </button>
                   </td>
                 </tr>
